@@ -72,7 +72,6 @@ class TaskSpider():
             #       formatted_time)
 
         html_file.close()
-
         pass
 
     def print_metrics(self):
