@@ -23,14 +23,13 @@ class TaskSpider():
                          '.timeline-content '
                          '.note-headline-light ')
 
-    def __init__(self, task_code):
-        self.task_url = f'/home/marcelbornancin/Downloads/{task_code}.html'
+    def __init__(self, html):
+        self.html = html
         self.stage_updates = []
 
     def scrap_metrics(self):
 
-        html_file = open(self.task_url, 'r')
-        soup = BeautifulSoup(html_file, 'html.parser')
+        soup = BeautifulSoup(self.html, 'html.parser')
 
         for activity in soup.select(TaskSpider.activity_selector):
             activity_message_node = activity.find('span',
@@ -71,8 +70,7 @@ class TaskSpider():
             #       f'+{added_tag}', '  \tat',
             #       formatted_time)
 
-        html_file.close()
-        pass
+        return self.stage_updates
 
     def print_metrics(self):
         stage_names, update_times = zip(*self.stage_updates)
@@ -81,6 +79,12 @@ class TaskSpider():
         print('\t'.join(update_times))
 
 
-spider = TaskSpider(2974)
-spider.scrap_metrics()
-spider.print_metrics()
+
+task_number = 2974
+task_file_path = f'/home/marcelbornancin/Downloads/{task_number}.html'
+
+with open(task_file_path, 'r') as task_file:
+    print(task_file)
+    spider = TaskSpider(task_file)
+    spider.scrap_metrics()
+    spider.print_metrics()
