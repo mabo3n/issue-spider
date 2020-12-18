@@ -79,12 +79,13 @@ class TaskSpider():
         print('\t'.join(update_times))
 
 
+if __name__ == "__main__":
+    import sys
+    task_number = sys.argv[1]
+    task_file_path = f'/home/marcelbornancin/Downloads/{task_number}.html'
 
-task_number = 2974
-task_file_path = f'/home/marcelbornancin/Downloads/{task_number}.html'
-
-with open(task_file_path, 'r') as task_file:
-    print(task_file)
-    spider = TaskSpider(task_file)
-    spider.scrap_metrics()
-    spider.print_metrics()
+    with open(task_file_path, 'r') as task_file:
+        print(task_file)
+        spider = TaskSpider(task_file)
+        spider.scrap_metrics()
+        spider.print_metrics()
