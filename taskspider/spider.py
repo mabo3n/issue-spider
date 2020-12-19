@@ -85,7 +85,6 @@ if __name__ == "__main__":
     task_file_path = f'/home/marcelbornancin/Downloads/{task_number}.html'
 
     with open(task_file_path, 'r') as task_file:
-        print(task_file)
         spider = TaskSpider(task_file)
         spider.scrap_metrics()
         spider.print_metrics()
