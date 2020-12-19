@@ -31,3 +31,28 @@ def test__scrap_metrics__should_ignore_design_and_test_planning_stages():
         ('DONE' '09/12/2020 17:54'),
     ]
 
+
+def test__scrap_metrics__should_consider_latest_stage_updates():
+    '''
+    When there are duplicated stage updates,
+    the latest ones should be considered.
+    '''
+    html = get_task_html(0000)  # Some task here
+    spider = TaskSpider(html)
+    metrics = spider.scrap_metrics()
+
+    assert metrics == [
+        ('READY TO DESIGN',          ''),
+        ('DESIGN DOING',             ''),
+        ('READY TO TEST PLANNING',   ''),
+        ('TEST PLANNING',            ''),
+        ('READY TO DEVELOPMENT',     ''),
+        ('DEVELOPMENT',              ''),
+        ('READY TO REVIEW',          ''),
+        ('REVIEW',                   ''),
+        ('READY TO TEST',            ''),
+        ('TEST',                     ''),
+        ('READY TO HOMOLOGATION',    ''),
+        ('HOMOLOGATION'              ''),
+        ('DONE'                      ''),
+    ]
