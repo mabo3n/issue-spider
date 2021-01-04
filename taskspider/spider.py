@@ -2,19 +2,19 @@ from bs4 import BeautifulSoup
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta as date_delta
 
-stage_tags = ['BACKLOG',
-              'READY TO DESIGN',
-              'DESIGN DOING',
-              'READY TO TEST PLANNING',
-              'TEST PLANNING',
-              'READY TO DEVELOPMENT',
-              'DEVELOPMENT',
-              'READY TO REVIEW',
-              'REVIEW',
-              'READY TO TEST',
-              'TEST',
-              'READY TO HOMOLOGATION',
-              'HOMOLOGATION']
+DELIVERY_SERVICE_TAGS = ['BACKLOG',
+                         'READY TO DESIGN',
+                         'DESIGN DOING',
+                         'READY TO TEST PLANNING',
+                         'TEST PLANNING',
+                         'READY TO DEVELOPMENT',
+                         'DEVELOPMENT',
+                         'READY TO REVIEW',
+                         'REVIEW',
+                         'READY TO TEST',
+                         'TEST',
+                         'READY TO HOMOLOGATION',
+                         'HOMOLOGATION']
 
 
 class TaskSpider():
@@ -54,7 +54,7 @@ class TaskSpider():
 
             if activity_verb == 'added':
                 first_added_tag = contents[1].text
-                if first_added_tag in stage_tags:
+                if first_added_tag in DELIVERY_SERVICE_TAGS:
                     self.stage_updates.append((first_added_tag, activity_time))
 
             if activity_verb == 'closed':
