@@ -27,8 +27,8 @@ def test__scrap_metrics__should_ignore_design_and_test_planning_stages():
         ('READY TO TEST', '09/12/2020 16:13'),
         ('TEST', '09/12/2020 16:25'),
         ('READY TO HOMOLOGATION', '09/12/2020 17:17'),
-        ('HOMOLOGATION' '09/12/2020 17:18'),
-        ('DONE' '09/12/2020 17:54'),
+        ('HOMOLOGATION', '09/12/2020 17:18'),
+        ('DONE', '09/12/2020 17:54'),
     ]
 
 
