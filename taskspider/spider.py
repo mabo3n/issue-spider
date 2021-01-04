@@ -38,33 +38,25 @@ class TaskSpider():
                 continue
 
             contents = [c for c in activity_message_node.find('span').children]
-
-            is_tag_action = len(contents) in [3, 5]
-            if not is_tag_action:
+            if len(contents) == 0:
                 continue
 
-            if str(contents[0]).endswith('added '):
-                added_tag = contents[1].text
-            elif str(contents[0]).endswith('removed '):
-                removed_tag = contents[1].text
-            else:
+            activity_verb = str(contents[0]).strip()
+            if activity_verb != 'added':
                 continue
 
-            if len(contents) == 5:
-                if str(contents[2]).endswith('added '):
-                    added_tag = contents[3].text
-                elif str(contents[2]).endswith('removed '):
-                    removed_tag = contents[3].text
-                else:
-                    continue
+            # print('contents:', [str(c)[:10] for c in contents])
+            # print('content[1]:', str(contents[1].text))
+
+            first_added_tag = contents[1].text
 
             activity_time_text = activity.find('time').get('datetime')
             activity_time_gmt_0 = date_parser.parse(activity_time_text)
             activity_time = activity_time_gmt_0 + date_delta(hours=-3)
             formatted_time = activity_time.strftime('%d/%m/%Y %H:%M')
 
-            if added_tag in stage_tags:
-                self.stage_updates.append((added_tag, formatted_time))
+            if first_added_tag in stage_tags:
+                self.stage_updates.append((first_added_tag, formatted_time))
 
             # print(f'-{removed_tag}a', '\t\t',
             #       f'+{added_tag}', '  \tat',
