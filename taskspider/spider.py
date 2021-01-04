@@ -2,26 +2,12 @@ from bs4 import BeautifulSoup
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta as date_delta
 
-DELIVERY_SERVICE_TAGS = ['BACKLOG',
-                         'READY TO DESIGN',
-                         'DESIGN DOING',
-                         'READY TO TEST PLANNING',
-                         'TEST PLANNING',
-                         'READY TO DEVELOPMENT',
-                         'DEVELOPMENT',
-                         'READY TO REVIEW',
-                         'REVIEW',
-                         'READY TO TEST',
-                         'TEST',
-                         'READY TO HOMOLOGATION',
-                         'HOMOLOGATION']
-
 
 class TaskSpider():
 
     activity_selector = ('.timeline-entry '
                          '.timeline-content '
-                         '.note-headline-light ')
+                         '.note-header-info ')
 
     def __init__(self, html):
         self.html = html
@@ -39,29 +25,32 @@ class TaskSpider():
     def scrap_metrics(self):
         soup = BeautifulSoup(self.html, 'html.parser')
 
-        for activity in soup.select(TaskSpider.activity_selector):
-            activity_message_node = activity.find('span',
-                                                  class_='system-note-message')
-            if activity_message_node is None:
-                continue
+        for activity_node in soup.select(self.activity_selector):
+            activity_time = self.get_activity_formatted_time(activity_node)
 
-            contents = [c for c in activity_message_node.find('span').children]
-            if len(contents) == 0:
-                continue
+            message_node = activity_node.find('span',
+                                              class_='system-note-message')
+            message = message_node.text
 
-            activity_verb = str(contents[0]).strip()
-            activity_time = self.get_activity_formatted_time(activity)
-
-            if activity_verb == 'added':
-                first_added_tag = contents[1].text
-                if first_added_tag in DELIVERY_SERVICE_TAGS:
-                    self.stage_updates.append((first_added_tag, activity_time))
-
-            if activity_verb == 'closed':
+            if (message.startswith('closed')
+                    and 'via merge request' not in message):
                 self.stage_updates.append(('DONE', activity_time))
 
-            # print('contents:', [str(c)[:10] for c in contents])
-            # print('content[1]:', str(contents[1].text))
+            elif (message.startswith('added')):
+                for message_item in message_node.find('span').children:
+
+                    if 'and removed' in str(message_item):
+                        break
+
+                    if 'UPSTREAM' in str(message_item):
+                        self.stage_updates.append((message_item.text,
+                                                   activity_time))
+                        break
+
+                    if 'DELIVERY SERVICE' in str(message_item):
+                        self.stage_updates.append((message_item.text,
+                                                   activity_time))
+                        break
 
         return self.stage_updates
 
