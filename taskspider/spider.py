@@ -27,8 +27,16 @@ class TaskSpider():
         self.html = html
         self.stage_updates = []
 
-    def scrap_metrics(self):
+    @staticmethod
+    def get_activity_formatted_time(activity_node):
+        activity_time_text = activity_node.find('time').get('datetime')
+        activity_time_gmt_0 = date_parser.parse(activity_time_text)
+        activity_time = activity_time_gmt_0 + date_delta(hours=-3)
+        formatted_time = activity_time.strftime('%d/%m/%Y %H:%M')
 
+        return formatted_time
+
+    def scrap_metrics(self):
         soup = BeautifulSoup(self.html, 'html.parser')
 
         for activity in soup.select(TaskSpider.activity_selector):
@@ -42,25 +50,18 @@ class TaskSpider():
                 continue
 
             activity_verb = str(contents[0]).strip()
-            if activity_verb != 'added':
-                continue
+            activity_time = self.get_activity_formatted_time(activity)
+
+            if activity_verb == 'added':
+                first_added_tag = contents[1].text
+                if first_added_tag in stage_tags:
+                    self.stage_updates.append((first_added_tag, activity_time))
+
+            if activity_verb == 'closed':
+                self.stage_updates.append(('DONE', activity_time))
 
             # print('contents:', [str(c)[:10] for c in contents])
             # print('content[1]:', str(contents[1].text))
-
-            first_added_tag = contents[1].text
-
-            activity_time_text = activity.find('time').get('datetime')
-            activity_time_gmt_0 = date_parser.parse(activity_time_text)
-            activity_time = activity_time_gmt_0 + date_delta(hours=-3)
-            formatted_time = activity_time.strftime('%d/%m/%Y %H:%M')
-
-            if first_added_tag in stage_tags:
-                self.stage_updates.append((first_added_tag, formatted_time))
-
-            # print(f'-{removed_tag}a', '\t\t',
-            #       f'+{added_tag}', '  \tat',
-            #       formatted_time)
 
         return self.stage_updates
 
