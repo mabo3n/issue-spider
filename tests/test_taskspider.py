@@ -76,10 +76,10 @@ def test__scrap_metrics__should_work_with_multiple_tag_additions():
     ]
 
 
-def test__scrap_metrics__should_consider_latest_stage_updates():
+def test__scrap_metrics__should_ignore_amiss_stage_updates():
     '''
-    When there are duplicated stage updates,
-    the latest ones should be considered.
+    When a task is mistakenly moved forward in the board
+    the amiss stage uptates should be ignored.
     '''
     html = get_task_html(3051)
     spider = TaskSpider(html)
