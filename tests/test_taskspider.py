@@ -1,4 +1,3 @@
-
 from taskspider import TaskSpider
 from os import path
 
@@ -51,7 +50,7 @@ def test__scrap_metrics__should_ignore_design_and_test_planning_stages():
         ('TEST',                     '09/12/2020 16:25'),
         ('READY TO HOMOLOGATION',    '09/12/2020 17:17'),
         ('HOMOLOGATION',             '09/12/2020 17:18'),
-        ('DONE',                     '09/12/2020 17:54'),
+        ('DONE',                     '10/12/2020 10:02'),
     ]
 
 
@@ -73,7 +72,7 @@ def test__scrap_metrics__should_work_with_multiple_tag_additions():
         ('TEST',                     '24/11/2020 16:40'),
         ('READY TO HOMOLOGATION',    '24/11/2020 17:22'),
         ('HOMOLOGATION',             '24/11/2020 17:50'),
-        ('DONE',                     '24/11/2020 18:08'),
+        ('DONE',                     '25/11/2020 08:36'),
     ]
 
 
