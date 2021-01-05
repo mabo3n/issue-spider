@@ -11,10 +11,8 @@ class TaskSpider():
 
     def __init__(self, html):
         self.html = html
-        self.stage_updates = []
 
-    @staticmethod
-    def get_activity_formatted_time(activity_node):
+    def __get_activity_formatted_time(self, activity_node):
         activity_time_text = activity_node.find('time').get('datetime')
         activity_time_gmt_0 = date_parser.parse(activity_time_text)
         activity_time = activity_time_gmt_0 + date_delta(hours=-3)
@@ -22,11 +20,28 @@ class TaskSpider():
 
         return formatted_time
 
+    def __remove_amiss_stage_updates(self, stage_updates):
+        stage_names = []
+        update_times = {}
+        for stage, time in stage_updates:
+            already_went_to_stage = stage in stage_names
+            if already_went_to_stage:
+                stage_index = stage_names.index(stage)
+                stage_names = stage_names[:stage_index + 1]
+            else:
+                stage_names.append(stage)
+                update_times[stage] = time
+
+        return [(stage, update_times[stage])
+                for stage in stage_names]
+
     def scrap_metrics(self):
         soup = BeautifulSoup(self.html, 'html.parser')
 
+        stage_updates = []
+
         for activity_node in soup.select(self.activity_selector):
-            activity_time = self.get_activity_formatted_time(activity_node)
+            activity_time = self.__get_activity_formatted_time(activity_node)
 
             message_node = activity_node.find('span',
                                               class_='system-note-message')
@@ -34,7 +49,7 @@ class TaskSpider():
 
             if (message.startswith('closed')
                     and 'via merge request' not in message):
-                self.stage_updates.append(('DONE', activity_time))
+                stage_updates.append(('DONE', activity_time))
 
             elif (message.startswith('added')):
                 for message_item in message_node.find('span').children:
@@ -42,23 +57,14 @@ class TaskSpider():
                     if 'and removed' in str(message_item):
                         break
 
-                    if 'UPSTREAM' in str(message_item):
-                        self.stage_updates.append((message_item.text,
-                                                   activity_time))
+                    if ('DELIVERY SERVICE' in str(message_item)
+                            or 'UPSTREAM' in str(message_item)):
+
+                        stage_updates.append((message_item.text,
+                                             activity_time))
                         break
 
-                    if 'DELIVERY SERVICE' in str(message_item):
-                        self.stage_updates.append((message_item.text,
-                                                   activity_time))
-                        break
-
-        return self.stage_updates
-
-    def print_metrics(self):
-        stage_names, update_times = zip(*self.stage_updates)
-        print('')
-        print('\t'.join(stage_names))
-        print('\t'.join(update_times))
+        return self.__remove_amiss_stage_updates(stage_updates)
 
 
 if __name__ == "__main__":
@@ -79,4 +85,8 @@ if __name__ == "__main__":
     with open(task_file_path, 'r') as task_file:
         spider = TaskSpider(task_file)
         spider.scrap_metrics()
-        spider.print_metrics()
+
+    stage_names, update_times = zip(*spider.stage_updates)
+    print('')
+    print('\t'.join(stage_names))
+    print('\t'.join(update_times))
