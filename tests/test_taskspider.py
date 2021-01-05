@@ -57,7 +57,7 @@ def test__scrap_metrics__should_ignore_design_and_test_planning_stages():
 def test__scrap_metrics__should_work_with_multiple_tag_additions():
     '''
     When creating a task and adding multiple tags at once,
-    the first delivery service tag should be considered
+    the first DELIVERY SERVICE/UPSTREAM tag should be considered
     '''
     html = get_task_html(3050)
     spider = TaskSpider(html)
