@@ -63,8 +63,18 @@ class TaskSpider():
 
 if __name__ == "__main__":
     import sys
+    import json
+    from os import path
+
+    current_dir = path.dirname(path.abspath(__file__))
+    settings_file_path = path.join(current_dir, 'settings.json')
+
+    with open(settings_file_path, 'r') as settings:
+        settings = json.load(settings)
+
+    downloads_dir = path.expanduser(settings['downloadsDirectory'])
     task_number = sys.argv[1]
-    task_file_path = f'/home/marcelbornancin/Downloads/{task_number}.html'
+    task_file_path = f'{downloads_dir}/{task_number}.html'
 
     with open(task_file_path, 'r') as task_file:
         spider = TaskSpider(task_file)
