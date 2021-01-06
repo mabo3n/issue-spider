@@ -68,8 +68,7 @@ class TaskSpider():
 
 
 if __name__ == "__main__":
-    from os import path, walk, mkdir
-    from shutil import rmtree
+    from os import path, walk
 
     current_dir = path.dirname(path.abspath(__file__))
     html_dir = path.join(current_dir, 'html')
@@ -81,13 +80,6 @@ if __name__ == "__main__":
                     file_path = path.join(dir_path, file_name)
                     with open(file_path, 'r') as html:
                         yield file_name, html
-
-    def clear_html_dir():
-        try:
-            rmtree(html_dir)
-            mkdir(html_dir)
-        except OSError as error:
-            print(f'{error.strerror}')
 
     print()
     for name, html in load_html_files():
@@ -104,5 +96,4 @@ if __name__ == "__main__":
 
         print('\n<<<')
 
-    clear_html_dir()
-    print('Done! Cleaning html directory...')
+    print('Done!')
