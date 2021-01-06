@@ -80,6 +80,7 @@ if __name__ == "__main__":
                     file_path = path.join(dir_path, file_name)
                     with open(file_path, 'r') as html:
                         yield file_name, html
+            break
 
     print()
     for name, html in load_html_files():
