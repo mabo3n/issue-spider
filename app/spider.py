@@ -84,7 +84,8 @@ if __name__ == "__main__":
 
     print()
     for name, html in load_html_files():
-        print(f'>>> Scraping metrics for "{name[:50]}"...\n')
+        pretty_name = name.split('·')[0]
+        print(f'>>> Scraping metrics for "{pretty_name}"...\n')
 
         try:
             metrics = IssueSpider(html).scrap_metrics()
