@@ -32,8 +32,12 @@ class IssueSpider():
                 stage_names.append(stage)
                 update_times[stage] = time
 
-        return [(stage, update_times[stage])
-                for stage in stage_names]
+        unique_stage_updates = [(stage, update_times[stage])
+                                for stage in stage_names]
+        has_amiss_stage_updates = (len(unique_stage_updates)
+                                       != len(stage_updates))
+
+        return unique_stage_updates, has_amiss_stage_updates
 
     def scrap_metrics(self):
         soup = BeautifulSoup(self.html, 'html.parser')
@@ -88,7 +92,13 @@ if __name__ == "__main__":
         print(f'>>> Scraping metrics for "{pretty_name}"...\n')
 
         try:
-            metrics = IssueSpider(html).scrap_metrics()
+            metrics, amiss_flag = IssueSpider(html).scrap_metrics()
+
+            if amiss_flag:
+                print('Warning(!): This issue went multiple times to '
+                      'some stage. Verify and make sure that the '
+                      'metrics were collected correctly.\n')
+
             stage_names, update_times = zip(*metrics)
             print('\t'.join(stage_names))
             print('\t'.join(update_times))
