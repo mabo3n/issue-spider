@@ -1,22 +1,21 @@
-from taskspider import TaskSpider
+from app import IssueSpider
 from os import path
-
 
 current_dir = path.dirname(path.abspath(__file__))
 fixtures_dir = path.join(current_dir, 'fixtures')
 
 
-def get_task_html(task_number):
-    task_file_name = f'{task_number}.html'
-    task_file_path = path.join(fixtures_dir, task_file_name)
+def get_issue_html(issue_number):
+    issue_file_name = f'{issue_number}.html'
+    issue_file_path = path.join(fixtures_dir, issue_file_name)
 
-    with open(task_file_path, 'r') as task_file:
-        return task_file.read()
+    with open(issue_file_path, 'r') as issue_file:
+        return issue_file.read()
 
 
 def test__scrap_metrics():
-    html = get_task_html(2963)
-    spider = TaskSpider(html)
+    html = get_issue_html(2963)
+    spider = IssueSpider(html)
     metrics = spider.scrap_metrics()
 
     assert metrics == [
@@ -37,8 +36,8 @@ def test__scrap_metrics():
 
 
 def test__scrap_metrics__should_ignore_design_and_test_planning_stages():
-    html = get_task_html(3075)
-    spider = TaskSpider(html)
+    html = get_issue_html(3075)
+    spider = IssueSpider(html)
     metrics = spider.scrap_metrics()
 
     assert metrics == [
@@ -56,11 +55,11 @@ def test__scrap_metrics__should_ignore_design_and_test_planning_stages():
 
 def test__scrap_metrics__should_work_with_multiple_tag_additions():
     '''
-    When creating a task and adding multiple tags at once,
+    When creating an issue and adding multiple tags at once,
     the first DELIVERY SERVICE/UPSTREAM tag should be considered
     '''
-    html = get_task_html(3050)
-    spider = TaskSpider(html)
+    html = get_issue_html(3050)
+    spider = IssueSpider(html)
     metrics = spider.scrap_metrics()
 
     assert metrics == [
@@ -78,11 +77,11 @@ def test__scrap_metrics__should_work_with_multiple_tag_additions():
 
 def test__scrap_metrics__should_ignore_amiss_stage_updates():
     '''
-    When a task is mistakenly moved forward in the board
+    When an issue is mistakenly moved forward in the board
     the amiss stage uptates should be ignored.
     '''
-    html = get_task_html(3051)
-    spider = TaskSpider(html)
+    html = get_issue_html(3051)
+    spider = IssueSpider(html)
     metrics = spider.scrap_metrics()
 
     assert metrics == [

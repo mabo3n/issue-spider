@@ -3,7 +3,7 @@ from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta as date_delta
 
 
-class TaskSpider():
+class IssueSpider():
 
     activity_selector = ('.timeline-entry '
                          '.timeline-content '
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         print(f'>>> Scraping metrics for "{name[:50]}"...\n')
 
         try:
-            metrics = TaskSpider(html).scrap_metrics()
+            metrics = IssueSpider(html).scrap_metrics()
             stage_names, update_times = zip(*metrics)
             print('\t'.join(stage_names))
             print('\t'.join(update_times))
