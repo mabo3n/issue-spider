@@ -68,25 +68,41 @@ class TaskSpider():
 
 
 if __name__ == "__main__":
-    import sys
-    import json
-    from os import path
+    from os import path, walk, mkdir
+    from shutil import rmtree
 
     current_dir = path.dirname(path.abspath(__file__))
-    settings_file_path = path.join(current_dir, 'settings.json')
+    html_dir = path.join(current_dir, 'html')
 
-    with open(settings_file_path, 'r') as settings:
-        settings = json.load(settings)
+    def load_html_files():
+        for dir_path, _, file_names in walk(html_dir):
+            for file_name in file_names:
+                if file_name.endswith('.html'):
+                    file_path = path.join(dir_path, file_name)
+                    with open(file_path, 'r') as html:
+                        yield file_name, html
 
-    downloads_dir = path.expanduser(settings['downloadsDirectory'])
-    task_number = sys.argv[1]
-    task_file_path = f'{downloads_dir}/{task_number}.html'
+    def clear_html_dir():
+        try:
+            rmtree(html_dir)
+            mkdir(html_dir)
+        except OSError as error:
+            print(f'{error.strerror}')
 
-    with open(task_file_path, 'r') as task_file:
-        spider = TaskSpider(task_file)
-        spider.scrap_metrics()
+    print()
+    for name, html in load_html_files():
+        print(f'>>> Scraping metrics for "{name[:50]}"...\n')
 
-    stage_names, update_times = zip(*spider.stage_updates)
-    print('')
-    print('\t'.join(stage_names))
-    print('\t'.join(update_times))
+        try:
+            metrics = TaskSpider(html).scrap_metrics()
+            stage_names, update_times = zip(*metrics)
+            print('\t'.join(stage_names))
+            print('\t'.join(update_times))
+
+        except Exception:
+            print('An error ocurred! Gotta do this one manually')
+
+        print('\n<<<')
+
+    clear_html_dir()
+    print('Done! Cleaning html directory...')
