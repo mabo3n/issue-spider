@@ -1,33 +1,38 @@
 
 # Table of Contents
 
-1.  [Requirements](#org2aebb97)
-2.  [Install](#org05defdd)
-3.  [Basic Usage](#org3b74d2d)
-4.  [Tips](#org58570df)
+1.  [Requirements](#org7b8f8cc)
+2.  [Install](#orgeb8b95d)
+3.  [Basic Usage](#org09f85b1)
+4.  [Tips](#org89ea913)
+    1.  [Map container volume when running](#org3202aaf)
 
 This is a crawler tool to aid in the metric collection of gitlab issues.
 
-The application read issues' html **files** from `./app/html/` and print metrics to stdout. 
+The application read issues' html **files** from `./app/html/` and print metrics to stdout.
 
 
-<a id="org2aebb97"></a>
+<a id="org7b8f8cc"></a>
 
 # Requirements
 
 [Docker](https://www.docker.com)
 
 
-<a id="org05defdd"></a>
+<a id="orgeb8b95d"></a>
 
 # Install
 
-Build a docker image from the `Dockerfile` at root directory:
+Clone this repository into your machine. Ex:
 
-    docker build . -t issue-spider            
+    git clone git@gitlab.com:qualyteam-group/qualyteam-novos-projetos/issue-spider.git
+
+`cd` to its directory and build a docker image from the `Dockerfile`:
+
+    docker build . -t issue-spider
 
 
-<a id="org3b74d2d"></a>
+<a id="org09f85b1"></a>
 
 # Basic Usage
 
@@ -59,15 +64,20 @@ The issues' metrics will be printed. Example output:
     Done!
 
 
-<a id="org58570df"></a>
+<a id="org89ea913"></a>
 
 # Tips
+
+
+<a id="org3202aaf"></a>
+
+## Map container volume when running
 
 It is **highly** recommended to check in which directory your browser saves html pages and map it to `./app/html/` when running the container, so it won't be necessary to move files around before running the app. Just right click and save the pages from the browser and run the applicaton.
 
 Linux example given html files are stored in the Desktop:
 
-    docker run --rm -itv ~/Desktop/:/app/app/html/ issue-spider
+    docker run --rm -itv ~/Downloads/:/app/app/html/ issue-spider
 
 Windows example with User's `Downloads` directory:
 
