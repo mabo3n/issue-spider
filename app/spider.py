@@ -35,7 +35,7 @@ class IssueSpider():
         unique_stage_updates = [(stage, update_times[stage])
                                 for stage in stage_names]
         has_amiss_stage_updates = (len(unique_stage_updates)
-                                       != len(stage_updates))
+                                   != len(stage_updates))
 
         return unique_stage_updates, has_amiss_stage_updates
 
