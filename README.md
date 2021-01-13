@@ -4,8 +4,6 @@
 1.  [Requirements](#org7b8f8cc)
 2.  [Install](#orgeb8b95d)
 3.  [Basic Usage](#org09f85b1)
-4.  [Tips](#org89ea913)
-    1.  [Map container volume when running](#org3202aaf)
 
 This is a crawler tool to aid in the metric collection of gitlab issues.
 
@@ -36,9 +34,15 @@ Clone this repository into your machine. Ex:
 
 # Basic Usage
 
-Put issues' html files at `./app/html/` and run the container interactively:
+Save issue's html pages on a given directory in your machine (_Ctrl-S_/_Cmd-S_ to do that on most browsers), then run the container interactively, mapping that directory to containers' `app/app/html/`. 
 
-    docker run --rm -it
+Example with the user's _Downloads_ directory on Linux:
+
+    docker run --rm -itv ~/Downloads/:/app/app/html/ issue-spider
+    
+Another example with the user's _Desktop_ directory on Windows:
+
+    docker run --rm -itv %userprofile%\Downloads\:/app/app/html/ issue-spider
 
 The issues' metrics will be printed. Example output:
 
@@ -62,24 +66,4 @@ The issues' metrics will be printed. Example output:
     
     <<<
     Done!
-
-
-<a id="org89ea913"></a>
-
-# Tips
-
-
-<a id="org3202aaf"></a>
-
-## Map container volume when running
-
-It is **highly** recommended to check in which directory your browser saves html pages and map it to `./app/html/` when running the container, so it won't be necessary to move files around before running the app. Just right click and save the pages from the browser and run the applicaton.
-
-Linux example given html files are stored in the Desktop:
-
-    docker run --rm -itv ~/Downloads/:/app/app/html/ issue-spider
-
-Windows example with User's `Downloads` directory:
-
-    docker run --rm -itv %userprofile%\Downloads\:/app/app/html/ issue-spider
 
